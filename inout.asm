@@ -28,7 +28,7 @@ frmt_ch db "%c",0x0D,0x0A,0
 SECTION .text
 global read_long
 global write_long
-
+global set_zero ;Neccessary for mul operation
 
 ;Cheks a zero in number
 ;RCX - location

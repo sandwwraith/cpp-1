@@ -3,6 +3,7 @@ EXTERN write_long
 
 SECTION .text
 global main
+global add_long_long ; Neccessary for mul operation
 
 ; adds two long number
 ;    rcx -- address of summand #1 (long number)
