@@ -31,10 +31,10 @@ global write_long
 global set_zero ;Neccessary for mul operation
 
 ;Cheks a zero in number
-;RCX - location
-;RDX - length in qwords
+;	RCX - location
+;	RDX - length in qwords
 check_zero:
-	push rdx ; Let's save it
+	push rdx
 	push rcx
 	push rax
 
@@ -53,10 +53,10 @@ check_zero:
 	ret
 
 ;Sets a zero in number
-;RCX - location
-;RDX - length in qwords
+;	RCX - location
+;	RDX - length in qwords
 set_zero:
-	push rdx ; Let's save it
+	push rdx
 	push rcx
 
 .loop:
@@ -71,22 +71,22 @@ set_zero:
 	ret
 
 
-; multiplies long number by a short
-;    rcx -- address of multiplier #1 (long number)
-;    rdx -- length of long number in qwords
-;    r8 -- multiplier #2 (64-bit unsigned)
+;Multiplies long number by a short
+;	rcx - address of multiplier #1 (long number)
+;	rdx - length of long number in qwords
+; 	r8 - multiplier #2 (64-bit unsigned)
 ; result:
-;    product is written to rcx
+;   product is written to rcx
 ;destroys:
 ;	r10,r11
-; You can notice that Long numbers are in Little Endian mode.
+;You can notice that Long numbers are in Little Endian mode.
 mul_long_short:
 	push rax
 	push rdx
 	push rcx
 
-	xor r10,r10 ; Using r10 for carry; We can destroy it and RAX.
-	mov r11,rdx ; We will use rdx in mul, now r11 - length.
+	xor r10,r10 ; Using r10 for carry;
+	mov r11,rdx ; We will use rdx in mul, so r11 is length now.
 
 .loop:
 	mov rax, [rcx]
@@ -105,7 +105,7 @@ mul_long_short:
 
 	ret
 
-; adds 64-bit number to long number
+; Add 64-bit number to long number
 ;    rcx -- address of summand #1 (long number)
 ;    rdx -- length of long number in qwords
 ;    r8 -- summand #2 (64-bit unsigned)
@@ -142,7 +142,7 @@ add_long_short:
 ;    r8 -- divisor (64-bit unsigned)
 ; result:
 ;    quotient is written to rcx
-;    RAX -- remainder
+;    rax -- remainder
 ;destroys:
 ; 	R9
 div_long_short:
@@ -150,7 +150,7 @@ div_long_short:
 	push rdx
 
 	lea rcx, [rcx + 8*rdx - 8]; Go to number's end.
-	mov r9,rdx; R9 is our counter now
+	mov r9,rdx; R9 is actual number's length
 	xor rdx,rdx; rdx is remainder now
 
 .loop:
@@ -161,7 +161,7 @@ div_long_short:
 	dec r9
 	jnz .loop
 
-	mov rax,rdx ; Setting up the contract - move remainder to RAX
+	mov rax,rdx ;move remainder to RAX
 
 	pop rdx
 	pop rcx
@@ -179,14 +179,14 @@ read_long:
 	push rdx
 	push rcx
 	push rsi; Use rsi as address for string
-	push rax; Al for char
+	push rax; AL for char
 	sub rsp, 128 * 8; Place for string
 	mov rsi,rsp
 
 	call set_zero
 
 
-	push rcx; actually, i'd better use a home area, but it work in this way too
+	push rcx; We need this registers to pass args to scanf
 	push rdx
 
 	sub rsp, 0x28 ; Shadow call
@@ -243,7 +243,7 @@ write_long:
 
 	mov r12, rdx
 
-	mov rax,20 ; allocate 20*length memory
+	mov rax,20 ; allocate 20*length memory, 'cause 2^64 ~ 1e19
 	mul r12
 	mov rbp,rsp
 	sub rsp,rax

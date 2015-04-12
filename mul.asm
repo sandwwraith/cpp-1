@@ -7,7 +7,7 @@ SECTION .text
 global main
 
 
-; multiplies long number by a short and moves it
+; Multiplies long number by a short and moves it
 ;    rcx -- address of multiplier #1 (long number)
 ;    rdx -- length of long number in qwords
 ;    r8 -- multiplier #2 (64-bit unsigned)
@@ -16,15 +16,14 @@ global main
 ;    product is written to r9
 ;destroys:
 ;	r10,r11
-; You can notice that Long numbers are in Little Endian mode.
 mul_mov_long_short:
 	push r9
 	push rax
 	push rdx
 	push rcx
 
-	xor r10,r10 ; Using r10 for carry; We can destroy it and RAX.
-	mov r11,rdx ; We will use rdx in mul, now r11 - length.
+	xor r10,r10 ; Using r10 for carry;
+	mov r11,rdx ; We will use rdx in mul, so r11 is length now.
 
 .loop:
 	mov rax, [rcx]
@@ -47,10 +46,12 @@ mul_mov_long_short:
 
 
 ;Shift lefts long number
-;r9 - location
-;RDX - length
-;RDI - amount of shift
-; destroys rax
+; Args are not in standart registers, for usability in calling code
+;	r9 - location
+;	RDX - length
+;	RDI - amount of shift
+; destroys:
+;	rax
 shift_left_long:
 	push r9
 	push rdx
@@ -63,7 +64,7 @@ shift_left_long:
 	sub r15,rdi ;r15 - number of significant blocks
 
 .loop:
-	;mov rax,[r9 - 8 * rdi]
+	;mov rax,[r9 - 8 * rdi] Unfortunately, we can't do this command
 	mov rax,r9
 	mov r14, rdi
 	shl r14,3
@@ -76,12 +77,12 @@ shift_left_long:
 	jnz .loop
 
 	;Fill the rest with zeros
-	;A bug, if shift is 0.
+	;An issue for zero shift.
 	test rdi,rdi
 	jz .end
 
 .loop2:
-	mov qword [r9],0 ;!!!
+	mov qword [r9],0
 	sub r9,8
 	dec rdi
 	jnz .loop2
@@ -97,10 +98,11 @@ shift_left_long:
 
 
 ;Moves long number
-;Rcx - source
-;Rdx - length
-;Rsi - destination
-;destroys rax
+;	Rcx - source
+;	Rdx - length
+;	Rsi - destination
+;destroys:
+;	rax
 mov_long_long:
 	push rcx
 	push rdx
@@ -120,10 +122,10 @@ mov_long_long:
 
 	ret
 
-;Multyplies two long numbers
-; RCX - location of operand one
-; RDX - length (128)
-; R8 - location of operand two
+;Multiplies two long numbers
+;	RCX - location of operand one
+;	RDX - length (128)
+;	R8 - location of operand two
 ;Result written to RCX
 mul_long_long:
 	push rcx
@@ -138,7 +140,7 @@ mul_long_long:
 	mov rbp, rsp
 	sub rsp, 2 * 8 * 128
 
-	mov rsi, rsp ;Rsi - accumulator
+	mov rsi, rsp ;rsi - accumulator
 	push rcx
 	mov rcx,rsi
 	call set_zero
@@ -155,7 +157,7 @@ mul_long_long:
 	call mul_mov_long_short
 	pop r8
 
-	call shift_left_long ; HUSTON, WE GOTTA PROBLEM
+	call shift_left_long
 	inc rdi
 
 	push rcx
@@ -203,8 +205,6 @@ main:
 	add rcx, 128*8
 
 	call read_long
-
-	;second in rcx, ready to add and write
 
 	call mul_long_long
 
