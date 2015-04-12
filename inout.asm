@@ -215,7 +215,7 @@ read_long:
 	mov r8,rax
 	call add_long_short
 
-	add rsi,1
+	inc rsi
 	jmp .loop
 
 .done:
@@ -251,7 +251,7 @@ write_long:
 	mov rdx, r12; Restore
 	mov rsi,rbp
 
-	sub rsi,1
+	dec rsi
 	mov rax, 0x0
 	mov [rsi], al ; Adding null-terminator
 
@@ -260,7 +260,7 @@ write_long:
 	call div_long_short
 	add rax, '0'
 
-	sub rsi,1
+	dec rsi
 	mov [rsi], al
 	call check_zero
 	jnz .loop
