@@ -7,6 +7,10 @@
 После этого в папке bin будут лежать исполняемые файлы
 
 Для проекта были использованы:
+
 1.  [NASM for Windows](http://www.nasm.us/pub/nasm/releasebuilds/2.11.08/win32/)
+
 2.  [GoLink](http://www.godevtool.com/)
+
 3.  [Sublime Text 2](http://www.sublimetext.com/) с плагином NASM x86 Assembly
+
